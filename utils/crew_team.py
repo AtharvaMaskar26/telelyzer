@@ -25,14 +25,19 @@ def analyze_call(transcript: str, script: str) -> dict:
         agent=call_recording_rater_agent
     )
 
-    crew = Crew(
-        tasks=[script_adherence_task, call_recording_rater_task], 
-        agents=[script_adherence_agent, call_recording_rater_agent], 
+    script_crew = Crew(
+        tasks=[script_adherence_task], 
+        agents=[script_adherence_agent], 
         verbose=True
     )   
 
-    result = crew.kickoff()
+    call_rating_crew = Crew(
+        tasks=[call_recording_rater_task], 
+        agents=[call_recording_rater_agent],
+        verbose=True
+    )
 
-    print(result.raw)
+    script_crew_result = script_crew.kickoff()
+    call_rating_result = call_rating_crew.kickoff()
 
-    return result.raw 
+    return script_crew_result.raw, call_rating_result.raw
